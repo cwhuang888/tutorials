@@ -62,6 +62,7 @@ print(x)                                      # result has the same size
 # Get its size:
 
 print(x.size())
+print("Dimensionality of x: ", len(x.size()))
 
 ###############################################################
 # .. note::
