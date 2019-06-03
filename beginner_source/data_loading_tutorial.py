@@ -32,7 +32,7 @@ from torchvision import transforms, utils
 import warnings
 warnings.filterwarnings("ignore")
 
-plt.ion()   # interactive mode
+plt.ion()  # interactive mode
 
 ######################################################################
 # The dataset we are going to deal with is that of facial pose.
@@ -67,30 +67,30 @@ landmarks_frame = pd.read_csv('data/faces/face_landmarks.csv')
 
 n = 65
 img_name = landmarks_frame.iloc[n, 0]
-landmarks = landmarks_frame.iloc[n, 1:].as_matrix()
+landmarks = landmarks_frame.iloc[n, 1:].as_matrix()  # returns ndarray of columns
 landmarks = landmarks.astype('float').reshape(-1, 2)
 
 print('Image name: {}'.format(img_name))
 print('Landmarks shape: {}'.format(landmarks.shape))
 print('First 4 Landmarks: {}'.format(landmarks[:4]))
 
-
 ######################################################################
 # Let's write a simple helper function to show an image and its landmarks
 # and use it to show a sample.
 #
 
+
 def show_landmarks(image, landmarks):
     """Show image with landmarks"""
     plt.imshow(image)
-    plt.scatter(landmarks[:, 0], landmarks[:, 1], s=10, marker='.', c='r')
+    plt.scatter(landmarks[:, 0], landmarks[:, 1], s=10, marker='.', c='r')  # x, y
     plt.pause(0.001)  # pause a bit so that plots are updated
+
 
 plt.figure()
 show_landmarks(io.imread(os.path.join('data/faces/', img_name)),
                landmarks)
 plt.show()
-
 
 ######################################################################
 # Dataset class
@@ -116,6 +116,9 @@ plt.show()
 # applied on the sample. We will see the usefulness of ``transform`` in the
 # next section.
 #
+# extensions = {'.jpg', '.png', '.gif'}
+# only_image_files = [f for f in os.listdir('.') if os.path.isfile(os.path.join('.', f)) and (f.endswith(ext) for ext in extensions)]
+
 
 class FaceLandmarksDataset(Dataset):
     """Face Landmarks dataset."""
@@ -148,11 +151,11 @@ class FaceLandmarksDataset(Dataset):
 
         return sample
 
-
 ######################################################################
 # Let's instantiate this class and iterate through the data samples. We
 # will print the sizes of first 4 samples and show their landmarks.
 #
+
 
 face_dataset = FaceLandmarksDataset(csv_file='data/faces/face_landmarks.csv',
                                     root_dir='data/faces/')
@@ -173,7 +176,6 @@ for i in range(len(face_dataset)):
     if i == 3:
         plt.show()
         break
-
 
 ######################################################################
 # Transforms
@@ -203,6 +205,7 @@ for i in range(len(face_dataset)):
 # Observe below how these transforms had to be applied both on the image and
 # landmarks.
 #
+
 
 class Rescale(object):
     """Rescale the image in a sample to a given size.
@@ -286,7 +289,6 @@ class ToTensor(object):
         return {'image': torch.from_numpy(image),
                 'landmarks': torch.from_numpy(landmarks)}
 
-
 ######################################################################
 # Compose transforms
 # ~~~~~~~~~~~~~~~~~~
@@ -299,6 +301,7 @@ class ToTensor(object):
 # ``torchvision.transforms.Compose`` is a simple callable class which allows us
 # to do this.
 #
+
 
 scale = Rescale(256)
 crop = RandomCrop(128)
@@ -317,7 +320,6 @@ for i, tsfrm in enumerate([scale, crop, composed]):
     show_landmarks(**transformed_sample)
 
 plt.show()
-
 
 ######################################################################
 # Iterating through the dataset
@@ -351,7 +353,6 @@ for i in range(len(transformed_dataset)):
 
     if i == 3:
         break
-
 
 ######################################################################
 # However, we are losing a lot of features by using a simple ``for`` loop to
@@ -389,6 +390,7 @@ def show_landmarks_batch(sample_batched):
                     s=10, marker='.', c='r')
 
         plt.title('Batch from dataloader')
+
 
 for i_batch, sample_batched in enumerate(dataloader):
     print(i_batch, sample_batched['image'].size(),
